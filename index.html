@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Fiscal Forge | Strategic Budget Optimizer</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="hero-section">
+  <div class="hero-inner">
+    <div class="badge-suite">
+       <span>Finance Engine</span>
+    </div>
+    <h1>Fiscal Forge<br><span style="font-size:1.8rem; background: none; color: var(--text-secondary);">Budget Orchestration </span></h1>
+    <div class="subhead">Budget Manager to Empower your Financial Decisions.</div>
+    <div class="pill-group">
+      <div class="pill-modern"><strong>① 0/1 Knapsack</strong> O(n·W)</div>
+      <div class="pill-modern"><strong>② Greedy Savings</strong> O(n log n)</div>
+      <div class="pill-modern"><strong>③ WMA Forecast</strong> O(n)</div>
+      <div class="pill-modern"><strong>④ PQ Rebalance</strong> O(n log n)</div>
+    </div>
+  </div>
+</div>
+
+<div class="app-container">
+  <div class="tab-strip">
+    <button class="tab-active" data-tab="opt">Optimizer</button>
+    <button data-tab="sav">Savings Planner</button>
+    <button data-tab="pred">Trend Predictor</button>
+    <button data-tab="rebal">Rebalancer</button>
+  </div>
+
+  <!-- 1. OPTIMIZER PANEL -->
+  <div id="panel-opt" class="tab-panels active-panel">
+    <div class="card-modern">
+      <div class="card-header"><h3>Income & Knapsack capacity</h3></div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div><label>Monthly salary (PKR)</label><input type="number" id="salary" value="80000" step="5000"></div>
+          <div><label>Allocation to expenses</label><div style="display:flex; gap:12px;"><input type="range" id="budgetPct" min="40" max="100" value="80"><span id="budgetPctVal" style="font-weight:700">80%</span></div></div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="metric-tile"><div class="metric-value-large" id="availBudget">PKR 64,000</div><div style="font-size:12px;">Expense budget</div></div>
+          <div class="metric-tile"><div class="metric-value-large" id="preSave">PKR 16,000</div><div>Pre-savings allocation</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-modern">
+      <div class="card-header"><h3>Expense Items (priority/cost)</h3></div>
+      <div class="card-body"><div id="expenseGrid" class="expense-modern-grid"></div></div>
+    </div>
+    <button class="btn-primary" id="runKnapBtn">▶ Run Optimizer</button>
+
+    <div id="optResultsArea" style="margin-top:28px; display:none;">
+      <div class="card-modern"><div class="card-header"><h3>Optimal Portfolio</h3></div><div class="card-body"><div class="grid-2" id="optMetrics"></div><div class="progress-track" style="margin:20px 0"><div class="progress-fill" id="optProgressFill"></div></div><div id="optBarChart"></div><div id="optList"></div></div></div>
+      <div class="card-modern"><div class="card-header"><h3>DP vs Greedy benchmark</h3></div><div class="card-body"><div class="grid-2"><div class="metric-tile"><div class="metric-value-large" id="cmpDP">—</div><div>DP optimal utility</div></div><div class="metric-tile"><div class="metric-value-large" id="cmpGreedy">—</div><div>Greedy heuristic</div></div></div></div></div>
+    </div>
+  </div>
+
+  <!-- 2. SAVINGS PLANNER -->
+  <div id="panel-sav" class="tab-panels">
+    <div class="card-modern"><div class="card-header"><h3>Savings goals (greedy by urgency)</h3></div><div class="card-body"><div id="goalsGrid"></div><div style="display:flex; gap:12px; margin-top:20px;"><button id="addGoalBtn" class="btn-outline">+ Add goal</button><button id="runSavingsBtn" class="btn-primary">Allocate leftover</button></div></div></div>
+    <div id="savResultsArea" style="display:none;"><div class="card-modern"><div class="card-header"><h3>Greedy allocation plan</h3></div><div class="card-body"><div id="savPoolInfo"></div><div id="savList"></div></div></div></div>
+  </div>
+
+  <!-- 3. FORECAST PREDICTOR -->
+  <div id="panel-pred" class="tab-panels">
+    <div class="card-modern"><div class="card-header"><h3>Weighted Moving Average (WMA) 3-month</h3></div><div class="card-body"><div id="forecastInputs"></div><button id="runForecastBtn" class="btn-primary">▶ Predict next month</button></div></div>
+    <div id="forecastResultsArea" style="display:none;"><div class="card-modern"><div class="card-header"><h3>Forecast & trend analysis</h3></div><div class="card-body"><div class="grid-2" id="foreMetrics"></div><div style="overflow-x:auto"><table class="forecast-table" id="foreTable" style="width:100%; border-collapse:collapse"></table></div></div></div></div>
+  </div>
+
+  <!-- 4. REBALANCER -->
+  <div id="panel-rebal" class="tab-panels">
+    <div class="card-modern"><div class="card-header"><h3>Actual spending vs budget (PQ rebalance)</h3></div><div class="card-body"><div id="overspendInputs"></div><div id="rebalBudgetInfo" style="margin:16px 0 8px; font-size:13px;"></div><button id="runRebalanceBtn" class="btn-primary">Rebalance with priority queue</button></div></div>
+    <div id="rebalResultsArea" style="display:none;"><div class="card-modern"><div class="card-header"><h3>Suggested cuts (lowest priority first)</h3></div><div class="card-body"><div id="rebalSummary"></div><div id="rebalList"></div></div></div></div>
+  </div>
+</div>
+
+<style>
+  .tab-panels { display: none; }
+  .active-panel { display: block; }
+  .forecast-table td, .forecast-table th { padding: 12px 8px; border-bottom: 1px solid #E9EDF2; }
+</style>
+
+<script src="app.js"></script>
+
+</body>
+</html>
